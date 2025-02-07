@@ -51,5 +51,5 @@ def main(image_path):
         print("No se encontró coincidencia.")
 
 if __name__ == "__main__":
-    image_path = "assets/img/Tobey_Maguire.jpg"
+    image_path = "assets/img/Henry_Cavill.jpg"
     main(image_path)

@@ -45,7 +45,7 @@ def register_person(image_path, name, face_id):
 if __name__ == "__main__":
     # image_path = input("Ingresa la ruta de la imagen de registro: ").strip()
     # name = input("Ingresa el nombre de la persona: ").strip()
-    face_id = 7
-    image_path = "assets/img/spiderman.jpg"
-    name = "spiderman"
+    face_id = 0
+    image_path = "assets/img/thor.jpg"
+    name = "thor"
     register_person(image_path, name, face_id)
