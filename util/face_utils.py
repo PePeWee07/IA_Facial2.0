@@ -5,8 +5,15 @@ from facenet_pytorch import MTCNN
 import face_recognition
 import torch
 
+
+print(torch.cuda.is_available())
+print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else "No CUDA")
+
+
 # Configuración global del dispositivo y del detector MTCNN
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
+print(f"Usando el dispositivo: {device}")
 
 # Configuración del detector MTCNN
 mtcnn = MTCNN(
@@ -17,6 +24,16 @@ mtcnn = MTCNN(
     image_size=224,              # Tamaño de la imagen para la detección
     margin=10,                   # Margen alrededor del rostro
     device=device                # Seleccionar GPU o CPU
+)
+
+mtcnn_multiple = MTCNN(
+    select_largest=False,
+    min_face_size=50,      
+    thresholds=[0.7, 0.7, 0.95],
+    post_process=False,
+    image_size=224,
+    margin=10,
+    device=device
 )
 
 # Carga y preprocesamiento de la imagen
@@ -71,6 +88,47 @@ def detect_and_align(image_np):
     except Exception as e:
         raise Exception(f"Error al detectar y alinear el rostro: {e}")
 
+
+# Detección y alineación de múltiples rostros
+def detect_and_align_multiple(image_np):
+    try:
+        boxes, probs, landmarks = mtcnn_multiple.detect(image_np, landmarks=True)
+        if boxes is None or landmarks is None or len(boxes) == 0:
+            return []
+        
+        faces = []
+        for box, landmark in zip(boxes, landmarks):
+            x1 = max(0, int(box[0]))
+            y1 = max(0, int(box[1]))
+            x2 = min(image_np.shape[1], int(box[2]))
+            y2 = min(image_np.shape[0], int(box[3]))
+            
+            if x2 - x1 <= 0 or y2 - y1 <= 0:
+                continue
+            
+            face = image_np[y1:y2, x1:x2, :]
+            if face.size == 0:
+                continue
+            
+            adjusted_landmarks = landmark - np.array([x1, y1])
+            aligned_face = align_face(face, adjusted_landmarks)
+            face_height, face_width = aligned_face.shape[:2]
+            
+            # Si el lado menor (ancho o alto) es mayor a 224 píxeles, se redimensiona el rostro para que el lado menor sea 224 píxeles.
+            if min(face_height, face_width) > 224:
+                resize_factor = 224 / min(face_height, face_width)
+                new_width = int(face_width * resize_factor)
+                new_height = int(face_height * resize_factor)
+                aligned_face = cv2.resize(aligned_face, (new_width, new_height), interpolation=cv2.INTER_CUBIC)
+            
+            faces.append((aligned_face, [x1, y1, x2, y2]))
+        
+        return faces
+    
+    except Exception as e:
+        print(f"Error in detect_and_align_multiple: {e}")
+        return []
+    
 
 # Extracción del encoding facial
 def extract_encoding(aligned_face):
