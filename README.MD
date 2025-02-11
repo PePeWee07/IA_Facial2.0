@@ -19,6 +19,7 @@ Hemos creado una aplicación utilizando Python con el framework Flask, que tiene
     - facenet_pytorch
     - matplotlib
     - face_recognition
+    - opencv-contrib-python
 
 
 2. **En caso de Error con `dlib` seguir los pasos**
