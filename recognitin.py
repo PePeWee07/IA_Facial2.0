@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from pymongo import MongoClient
-from face_utils import load_and_preprocess_image, detect_and_align, extract_encoding
+from util.face_utils import load_and_preprocess_image, detect_and_align, extract_encoding
 
 # Umbral para considerar una coincidencia 
 SIMILARITY_THRESHOLD = 0.92

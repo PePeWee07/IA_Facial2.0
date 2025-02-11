@@ -1,7 +1,7 @@
 import os
 import cv2
 from pymongo import MongoClient
-from face_utils import load_and_preprocess_image, detect_and_align, extract_encoding
+from util.face_utils import load_and_preprocess_image, detect_and_align, extract_encoding
 
 def register_person(image_path, name, face_id):
     try:
