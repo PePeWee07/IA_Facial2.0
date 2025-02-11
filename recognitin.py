@@ -1,15 +1,12 @@
 import os
 import numpy as np
 from pymongo import MongoClient
-from face_utils import cargar_y_preprocesar_imagen, detectar_y_alinear, extraer_encoding
+from face_utils import load_and_preprocess_image, detect_and_align, extract_encoding
 
-# Umbral para considerar una coincidencia (ajústalo según tus pruebas)
+# Umbral para considerar una coincidencia 
 SIMILARITY_THRESHOLD = 0.92
 
 def cosine_similarity(a, b):
-    """
-    Calcula la similitud de coseno entre dos vectores.
-    """
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 def main(image_path):
@@ -22,9 +19,9 @@ def main(image_path):
         return
 
     try:
-        image_np = cargar_y_preprocesar_imagen(image_path)
-        aligned_face = detectar_y_alinear(image_np)
-        input_encoding = extraer_encoding(aligned_face)
+        image_np = load_and_preprocess_image(image_path)
+        aligned_face = detect_and_align(image_np)
+        input_encoding = extract_encoding(aligned_face)
         print("Encoding obtenido de la imagen a reconocer.")
     except Exception as e:
         print(f"Error en el procesamiento de la imagen: {e}")

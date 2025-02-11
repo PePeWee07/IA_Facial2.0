@@ -1,25 +1,17 @@
 import os
 import cv2
 from pymongo import MongoClient
-from face_utils import cargar_y_preprocesar_imagen, detectar_y_alinear, extraer_encoding
+from face_utils import load_and_preprocess_image, detect_and_align, extract_encoding
 
 def register_person(image_path, name, face_id):
-    """
-    Registra una persona en la base de datos:
-    - Procesa la imagen (carga, preprocesa, detecta y alinea el rostro)
-    - Extrae el encoding facial
-    - Guarda la imagen procesada en una ruta definida
-    - Inserta en MongoDB un documento con el encoding, la ruta y el nombre
-    """
     try:
-        image_np = cargar_y_preprocesar_imagen(image_path)
-        aligned_face = detectar_y_alinear(image_np)
-        encoding = extraer_encoding(aligned_face)
+        image_np = load_and_preprocess_image(image_path)
+        aligned_face = detect_and_align(image_np)
+        encoding = extract_encoding(aligned_face)
     except Exception as e:
         print(f"Error en el procesamiento de la imagen: {e}")
         return
 
-    # Generar un nombre seguro para la imagen, eliminando espacios
     safe_name = name.replace(" ", "_")
     face_filename = os.path.join("assets/img/faces", f"{safe_name}_{face_id}.png")
     face_filename = face_filename.replace("\\", "/")
@@ -43,8 +35,6 @@ def register_person(image_path, name, face_id):
         print(f"Error al insertar en MongoDB: {e}")
 
 if __name__ == "__main__":
-    # image_path = input("Ingresa la ruta de la imagen de registro: ").strip()
-    # name = input("Ingresa el nombre de la persona: ").strip()
     face_id = 0
     image_path = "assets/img/thor.jpg"
     name = "thor"
