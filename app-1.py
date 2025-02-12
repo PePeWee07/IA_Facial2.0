@@ -11,7 +11,7 @@ SIMILARITY_THRESHOLD = 0.92
 DEBUG = True
 
 # Procesar cada N-ésimo frame (por ejemplo, cada 3° frame)
-SKIP_FRAMES = 3
+SKIP_FRAMES = 10
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
